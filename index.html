@@ -307,6 +307,28 @@
         
         .btn-group { display: flex; gap: 16px; flex-wrap: wrap; }
 
+        /* E-posta seçim menüsü */
+        .mail-wrap { position: relative; }
+        .mail-menu {
+            position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 20; min-width: 240px;
+            background: var(--bg); border: 1.5px solid rgba(209, 213, 219, 0.25);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.35);
+            display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden; transform: translateY(4px);
+            transition: opacity .15s, transform .15s, visibility .15s;
+        }
+        .mail-menu.open { opacity: 1; visibility: visible; transform: none; }
+        .mail-menu a, .mail-menu button {
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+            padding: 13px 16px; font: inherit; font-size: 15px; font-weight: 600; text-align: left;
+            color: var(--ink); background: none; border: 0; cursor: pointer;
+        }
+        .mail-menu > * + * { border-top: 1px solid var(--line); }
+        .mail-menu a:hover, .mail-menu button:hover { background: var(--ink); color: var(--bg); }
+        .mail-menu small { font-family: var(--mono); font-size: 11px; color: var(--mute); white-space: nowrap; }
+        .mail-menu a, .mail-menu button { white-space: nowrap; }
+        .mail-menu a:hover small, .mail-menu button:hover small { color: var(--bg); }
+
         footer {
             padding: 60px 0 40px;
             text-align: center;
@@ -448,7 +470,15 @@
                 <div class="sec-head"><span class="sec-no">03</span><span class="sec-label">CONTACT</span></div>
                 
                 <div class="btn-group">
-                    <a href="mailto:berkezekiarslankilic@gmail.com" class="btn btn-red">Email Me</a>
+                    <div class="mail-wrap">
+                        <a href="mailto:berkezekiarslankilic@gmail.com" class="btn btn-red" id="mail-btn" aria-haspopup="true" aria-expanded="false">Email Me</a>
+                        <div class="mail-menu" id="mail-menu">
+                            <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=berkezekiarslankilic@gmail.com" target="_blank" rel="noopener noreferrer">Gmail <small>↗</small></a>
+                            <a href="https://outlook.live.com/mail/0/deeplink/compose?to=berkezekiarslankilic@gmail.com" target="_blank" rel="noopener noreferrer">Outlook <small>↗</small></a>
+                            <a href="mailto:berkezekiarslankilic@gmail.com">Mail app <small>default</small></a>
+                            <button type="button" id="mail-copy">Copy address <small id="mail-copy-note">copy</small></button>
+                        </div>
+                    </div>
                     <a href="https://www.linkedin.com/in/berkearslankilic/" target="_blank" rel="noopener noreferrer" class="btn btn-line">LinkedIn ↗</a>
                 </div>
             </div>
@@ -494,6 +524,31 @@
         });
         document.addEventListener('click', e => { if (!e.target.closest('.info-panel')) closeAllInfo(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllInfo(); });
+
+        // Email Me: mailto her bilgisayarda çalışmadığı için seçim menüsü
+        const mailBtn = document.getElementById('mail-btn');
+        const mailMenu = document.getElementById('mail-menu');
+        const setMail = open => { mailMenu.classList.toggle('open', open); mailBtn.setAttribute('aria-expanded', String(open)); };
+        mailBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); setMail(!mailMenu.classList.contains('open')); });
+        mailMenu.addEventListener('click', e => e.stopPropagation());
+        document.addEventListener('click', () => setMail(false));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') setMail(false); });
+        document.getElementById('mail-copy').addEventListener('click', async () => {
+            const note = document.getElementById('mail-copy-note');
+            const addr = 'berkezekiarslankilic@gmail.com';
+            let ok = false;
+            try { await navigator.clipboard.writeText(addr); ok = true; } catch {}
+            if (!ok) {
+                // Eski yöntem: gizli metin kutusundan kopyala
+                const ta = document.createElement('textarea');
+                ta.value = addr; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                try { ok = document.execCommand('copy'); } catch {}
+                ta.remove();
+            }
+            note.textContent = ok ? 'copied' : addr;
+            setTimeout(() => { note.textContent = 'copy'; }, 1800);
+        });
     </script>
 </body>
 </html>
