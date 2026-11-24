@@ -193,17 +193,6 @@
             pointer-events: none; /* Let mouse tracking pass through text */
         }
 
-        .hero-name {
-            display: block;
-            text-align: center;
-            font-family: var(--mono);
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--red);
-            margin-bottom: 18px;
-        }
 
         /* Grid */
         .projects-grid {
@@ -328,7 +317,18 @@
         }
 
         @media (max-width: 768px) {
-            .nav-inner nav { display: none; }
+            .nav-inner { height: 64px; }
+            nav { gap: 4px; font-size: 14px; }
+            nav a { padding: 4px 6px; }
+            .logo-text { font-size: 11px; letter-spacing: 1.5px; padding: 5px 8px; }
+            .wrap { padding: 0 18px; }
+            .sec { padding: 56px 0; }
+            .hero { min-height: 46vh; }
+        }
+        @media (max-width: 400px) {
+            .logo-text { font-size: 10.5px; letter-spacing: .5px; padding: 5px 7px; }
+            nav { gap: 0; font-size: 13px; }
+            nav a { padding: 4px 5px; }
         }
     </style>
 </head>
@@ -349,7 +349,6 @@
         <section id="home" class="hero">
             <div class="hero-dynamic"></div>
             <div class="wrap" style="pointer-events: none;">
-                <span class="hero-name">Berke Arslankılıç</span>
                 <p>Just a space to keep my engineering and software work organized.</p>
             </div>
         </section>
